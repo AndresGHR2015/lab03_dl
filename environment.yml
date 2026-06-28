@@ -1,0 +1,17 @@
+name: utkface_lab
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch
+  - torchvision
+  - pytorch-cuda=12.1
+  - scikit-learn
+  - numpy
+  - pandas
+  - pillow
+  - tensorboard
+  - streamlit
