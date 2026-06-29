@@ -1,0 +1,11 @@
+nohup: ignoring input
+Exactitud de genero: 0.8128
+Reporte de clasificacion de genero:
+Clase 0: precision=0.8113, sensibilidad=0.8299, f1=0.8205, soporte=1834
+Clase 1: precision=0.8144, sensibilidad=0.7945, f1=0.8043, soporte=1723
+Exactitud global: 0.8128
+Promedio macro: precision=0.8128, sensibilidad=0.8122, f1=0.8124, soporte=3557
+Promedio ponderado: precision=0.8128, sensibilidad=0.8128, f1=0.8127, soporte=3557
+MAE de edad: 11.7690
+RMSE de edad: 15.2044
+R2 de edad: 0.4059

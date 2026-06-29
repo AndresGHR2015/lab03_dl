@@ -1,0 +1,49 @@
+{
+  "gender_accuracy": 0.8360978352544279,
+  "gender_f1_weighted": 0.8357773648616544,
+  "gender_precision_weighted": 0.8370965601589853,
+  "gender_recall_weighted": 0.8360978352544279,
+  "gender_confusion_matrix": [
+    [
+      1598,
+      236
+    ],
+    [
+      347,
+      1376
+    ]
+  ],
+  "age_mae": 10.478796621579818,
+  "age_rmse": 13.571391299449639,
+  "age_r2": 0.5266298186457936,
+  "age_mae_by_decade": {
+    "0-10": 11.817714877141995,
+    "11-20": 12.40697971734301,
+    "21-30": 7.994170885094087,
+    "31-40": 7.404519259466168,
+    "41-50": 8.298223049457256,
+    "51-60": 12.478299126780705,
+    "61-70": 16.00545106763425,
+    "71-80": 22.029516128172357,
+    "81-90": 29.07417594612419,
+    "91-100": 36.48937511444092,
+    "101-110": 45.070822397867836,
+    "111-120": 55.24917221069336
+  },
+  "correct_examples_saved": [
+    "outputs/plots_and_csv/correct_00000_gender_true_1_pred_1_age_true_22p0_pred_31p1.png",
+    "outputs/plots_and_csv/correct_00001_gender_true_0_pred_0_age_true_56p0_pred_50p4.png",
+    "outputs/plots_and_csv/correct_00003_gender_true_0_pred_0_age_true_60p0_pred_55p5.png",
+    "outputs/plots_and_csv/correct_00004_gender_true_0_pred_0_age_true_30p0_pred_30p2.png",
+    "outputs/plots_and_csv/correct_00005_gender_true_1_pred_1_age_true_26p0_pred_23p1.png"
+  ],
+  "incorrect_examples_saved": [
+    "outputs/plots_and_csv/incorrect_00002_gender_true_0_pred_0_age_true_13p0_pred_33p3.png",
+    "outputs/plots_and_csv/incorrect_00006_gender_true_0_pred_1_age_true_21p0_pred_32p5.png",
+    "outputs/plots_and_csv/incorrect_00009_gender_true_0_pred_0_age_true_76p0_pred_42p0.png",
+    "outputs/plots_and_csv/incorrect_00015_gender_true_1_pred_0_age_true_48p0_pred_40p4.png",
+    "outputs/plots_and_csv/incorrect_00018_gender_true_1_pred_0_age_true_85p0_pred_61p3.png"
+  ],
+  "correct_examples_count": 5,
+  "incorrect_examples_count": 5
+}

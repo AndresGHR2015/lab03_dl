@@ -8,10 +8,12 @@ dependencies:
   - python=3.10
   - pytorch
   - torchvision
-  - pytorch-cuda=12.1
   - scikit-learn
+  - matplotlib
   - numpy
   - pandas
   - pillow
   - tensorboard
   - streamlit
+  - pip:
+    - opencv-python-headless
