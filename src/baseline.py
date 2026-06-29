@@ -12,6 +12,10 @@ from sklearn.metrics import r2_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.pipeline import Pipeline
 
+import sys
+import os
+sys.path.append(os.getcwd())
+
 from src.dataset import get_dataloaders
 
 
