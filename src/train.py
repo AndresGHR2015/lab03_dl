@@ -17,6 +17,7 @@ DEFAULT_OUTPUT_DIR = Path("outputs/models")
 DEFAULT_EPOCHS = 20
 DEFAULT_LEARNING_RATE = 1e-3
 DEFAULT_LAMBDA_AGE = 0.01
+CNN_ABLACION_LAMBDA_AGE = 0.5
 
 
 def parse_args():
@@ -34,6 +35,8 @@ def build_model_registry():
         "mlp": lambda: MultiTaskMLP(),
         "cnn": lambda: MultiTaskCNN(),
         "resnet": lambda: MultiTaskResNet(freeze_backbone=True, pretrained=True),
+        "ResNet_FineTuned": lambda: MultiTaskResNet(freeze_backbone=False),
+        "CNN_Ablacion": lambda: MultiTaskCNN(),
     }
 
 
@@ -138,8 +141,13 @@ def train_model(model_name, model, train_loader, validation_loader, test_loader,
     print(f"Parametros entrenables: {sum(p.numel() for p in model.parameters() if p.requires_grad):,}")
 
     for epoch in range(args.epochs):
-        train_loss = train_one_epoch(model, train_loader, optimizer, device, args.lambda_age)
-        validation_loss = validate(model, validation_loader, device, args.lambda_age)
+        if model_name == "CNN_Ablacion":
+            epoch_lambda_age = CNN_ABLACION_LAMBDA_AGE
+        else:
+            epoch_lambda_age = args.lambda_age
+
+        train_loss = train_one_epoch(model, train_loader, optimizer, device, epoch_lambda_age)
+        validation_loss = validate(model, validation_loader, device, epoch_lambda_age)
         print_epoch_summary(model_name, epoch, args.epochs, train_loss, validation_loss)
 
         if validation_loss < best_validation_loss:
