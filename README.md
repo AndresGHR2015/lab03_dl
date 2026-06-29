@@ -112,6 +112,8 @@ Toda la ejecución utiliza una **semilla determinista** (`seed = 42`) configurad
 
 ## Ejecución del Entrenamiento
 
+(Debido a su tamaño, los modelos pre-entrenados no están en el código fuente. Descarga el archivo models.zip desde la pestaña de Releases de este repositorio y colóca los modelos exactamente en la ruta outputs/models/ antes de ejecutar Streamlit. El programa esta hardcodeado para usar el modelo ResNet_FineTuned_best.pth por ser el mejor modelo. Esto se puede cambiar en app.y)
+
 **Baseline clásico (E1):**
 
 ```bash
