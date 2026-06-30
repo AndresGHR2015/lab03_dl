@@ -1,11 +1,14 @@
 import argparse
 import json
+import sys
+import time
 from pathlib import Path
 
 import torch
 import torch.nn as nn
 
 from src.dataset import get_dataloaders
+from src.dataset import set_seed
 from src.eval import evaluate
 from src.models import MultiTaskCNN
 from src.models import MultiTaskMLP
@@ -127,6 +130,26 @@ def print_evaluation_summary(model_name, metrics):
     print(f"{'=' * 60}\n")
 
 
+def _count_parameters(model):
+    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    total = sum(p.numel() for p in model.parameters())
+    return trainable, total
+
+
+def _build_environment_metadata(device):
+    metadata = {
+        "device": str(device),
+        "pytorch_version": torch.__version__,
+        "python_version": sys.version,
+    }
+
+    if torch.cuda.is_available():
+        metadata["gpu_name"] = torch.cuda.get_device_name(device)
+        metadata["cuda_version"] = torch.version.cuda
+
+    return metadata
+
+
 def train_model(model_name, model, train_loader, validation_loader, test_loader, device, args):
     model.to(device)
     optimizer = torch.optim.Adam(
@@ -138,9 +161,11 @@ def train_model(model_name, model, train_loader, validation_loader, test_loader,
     checkpoint_path = args.output_dir / f"{model_name}_best.pth"
     train_loss_history = []
     validation_loss_history = []
+    epoch_durations = []
+    trainable_parameters, total_parameters = _count_parameters(model)
 
     print(f"\nEntrenando modelo: {model_name}")
-    print(f"Parametros entrenables: {sum(p.numel() for p in model.parameters() if p.requires_grad):,}")
+    print(f"Parametros entrenables: {trainable_parameters:,} / Total: {total_parameters:,}")
 
     for epoch in range(args.epochs):
         if model_name == "CNN_Ablacion":
@@ -148,10 +173,14 @@ def train_model(model_name, model, train_loader, validation_loader, test_loader,
         else:
             epoch_lambda_age = args.lambda_age
 
+        epoch_start = time.time()
         train_loss = train_one_epoch(model, train_loader, optimizer, device, epoch_lambda_age)
         validation_loss = validate(model, validation_loader, device, epoch_lambda_age)
+        epoch_duration = time.time() - epoch_start
+
         train_loss_history.append(train_loss)
         validation_loss_history.append(validation_loss)
+        epoch_durations.append(epoch_duration)
         print_epoch_summary(model_name, epoch, args.epochs, train_loss, validation_loss)
 
         if validation_loss < best_validation_loss:
@@ -169,6 +198,12 @@ def train_model(model_name, model, train_loader, validation_loader, test_loader,
     model.load_state_dict(best_checkpoint["model_state_dict"])
 
     test_metrics = evaluate(model, test_loader)
+    test_metrics["trainable_parameters"] = trainable_parameters
+    test_metrics["total_parameters"] = total_parameters
+    test_metrics["seconds_per_epoch"] = epoch_durations
+    test_metrics["average_seconds_per_epoch"] = sum(epoch_durations) / len(epoch_durations)
+    test_metrics["environment"] = _build_environment_metadata(device)
+
     print_evaluation_summary(model_name, test_metrics)
 
     metrics_path = args.output_dir / f"{model_name}_metrics.json"
@@ -179,6 +214,7 @@ def train_model(model_name, model, train_loader, validation_loader, test_loader,
 
 def main():
     args = parse_args()
+    set_seed()
 
     if not args.data_dir.exists():
         raise FileNotFoundError(f"No se encontro la carpeta de datos: {args.data_dir}")
