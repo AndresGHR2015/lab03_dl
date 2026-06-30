@@ -136,6 +136,8 @@ def train_model(model_name, model, train_loader, validation_loader, test_loader,
 
     best_validation_loss = float("inf")
     checkpoint_path = args.output_dir / f"{model_name}_best.pth"
+    train_loss_history = []
+    validation_loss_history = []
 
     print(f"\nEntrenando modelo: {model_name}")
     print(f"Parametros entrenables: {sum(p.numel() for p in model.parameters() if p.requires_grad):,}")
@@ -148,11 +150,20 @@ def train_model(model_name, model, train_loader, validation_loader, test_loader,
 
         train_loss = train_one_epoch(model, train_loader, optimizer, device, epoch_lambda_age)
         validation_loss = validate(model, validation_loader, device, epoch_lambda_age)
+        train_loss_history.append(train_loss)
+        validation_loss_history.append(validation_loss)
         print_epoch_summary(model_name, epoch, args.epochs, train_loss, validation_loss)
 
         if validation_loss < best_validation_loss:
             best_validation_loss = validation_loss
             save_checkpoint(model, optimizer, epoch, validation_loss, checkpoint_path)
+
+    loss_history = {
+        "train_loss": train_loss_history,
+        "validation_loss": validation_loss_history,
+    }
+    loss_history_path = args.output_dir / f"{model_name}_loss_history.json"
+    save_metrics(loss_history, loss_history_path)
 
     best_checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=True)
     model.load_state_dict(best_checkpoint["model_state_dict"])
